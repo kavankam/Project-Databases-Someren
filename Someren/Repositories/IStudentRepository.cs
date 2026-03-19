@@ -10,4 +10,6 @@ public interface IStudentRepository
     void Update(Student student);
     void Delete(int studentId);
     bool StudentNumberExists(int studentNumber, int? excludeStudentId = null);
+    
+    /* mani */
 }
