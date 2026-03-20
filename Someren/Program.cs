@@ -10,6 +10,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllersWithViews();
         builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+        builder.Services.AddScoped<ILecturerRepository, LecturerRepository>();
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
