@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using DiagnosticsActivity = System.Diagnostics.Activity; /*i renamed it because it cannot identify which 
+                                                          activity since "activity" is also used in db*/
 using Microsoft.AspNetCore.Mvc;
 using Someren.Models;
 
@@ -26,6 +28,6 @@ public class HomeController : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return View(new ErrorViewModel { RequestId = DiagnosticsActivity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
-}//test
+}
