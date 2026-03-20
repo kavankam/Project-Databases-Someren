@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Someren.Models.Activity>
+
+<div class="container-fluid">
+    <h1>Activities</h1>
+
+    <form asp-action="Index" method="get" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="searchTerm" class="form-control" placeholder="Search activities..." style="max-width: 300px;" />
+            <button type="submit" class="btn btn-primary ms-2">Search</button>
+            <a asp-action="Index" class="btn btn-secondary ms-1">Clear</a>
+        </div>
+    </form>
+
+    <div class="mb-3">
+        <a asp-action="Create" class="btn btn-primary">Add New Activity</a>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Day.ToShortDateString()</td>
+                    <td>@item.TimeSlot.ToString(@"hh\:mm")</td>
+                    <td class="text-end">
+                        <a asp-action="Edit" asp-route-id="@item.ActivityID" class="btn btn-sm btn-warning">Edit</a>
+
+                        <form asp-action="Delete" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@item.ActivityID" />
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this activity?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
