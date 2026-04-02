@@ -1,0 +1,80 @@
+@model Someren.Models.ManageSupervisorsModel
+
+@{
+    ViewData["Title"] = "Manage Supervisors";
+}
+
+<h2>Manage Supervisors</h2>
+
+
+<h5>Activity: @Model.Activity.Name</h5>
+
+<hr />
+
+<div style="display: flex; gap: 50px;">
+
+    <div>
+        <h4>Current Supervisors</h4>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var lecturer in Model.Supervisors)
+            {
+            <tr>
+                <td>@lecturer.FirstName @lecturer.LastName</td>
+                <td>@lecturer.PhoneNumber</td>
+                <td>
+                    <form asp-action="RemoveSupervisor" method="post">
+                    <input type="hidden" name="activityId" value="@Model.Activity.ActivityID" />
+                    <input type="hidden" name="lecturerId" value="@lecturer.LecturerID" />
+                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                </form>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h4>Add Supervisor</h4>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var lecturer in Model.NonSupervisors)
+            {
+            <tr>
+                <td>@lecturer.FirstName @lecturer.LastName</td>
+                <td>@lecturer.PhoneNumber</td>
+                <td>
+                    <form asp-action="AddSupervisor" method="post">
+                    <input type="hidden" name="activityId" value="@Model.Activity.ActivityID" />
+                    <input type="hidden" name="lecturerId" value="@lecturer.LecturerID" />
+                    <button type="submit" class="btn btn-success btn-sm">Add</button>
+                </form>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<br />
+
+<a asp-action="Index" class="btn btn-secondary">Back to Activities</a>

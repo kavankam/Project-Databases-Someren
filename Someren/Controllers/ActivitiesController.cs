@@ -8,10 +8,13 @@ namespace Someren.Controllers
     public class ActivitiesController : Controller
     {
         private readonly IActivityRepository _activityRepo;
+        private readonly IActivitySupervisorRepository _activitySupervisorRepository;
 
-        public ActivitiesController(IActivityRepository activityRepo)
+        public ActivitiesController(IActivityRepository activityRepo, IActivitySupervisorRepository activitySupervisorRepository)
         {
             _activityRepo = activityRepo;
+            _activitySupervisorRepository = activitySupervisorRepository;
+
         }
 
         public IActionResult Index(string? searchTerm)
@@ -94,6 +97,37 @@ namespace Someren.Controllers
                 _activityRepo.SaveChanges();
             }
             return RedirectToAction(nameof(Index));
+        }
+        
+        public IActionResult ManageSupervisors(int activityId)
+        {
+            var activity = _activityRepo.GetById(activityId);
+
+            var supervisors = _activitySupervisorRepository.GetSupervisors(activityId);
+            var nonSupervisors = _activitySupervisorRepository.GetNonSupervisors(activityId);
+
+            var manageSupervisorModel = new ManageSupervisorsModel
+            {
+                Activity = activity,
+                Supervisors = supervisors,
+                NonSupervisors = nonSupervisors
+            };
+
+            return View(manageSupervisorModel);
+        }
+        
+        [HttpPost]
+        public IActionResult AddSupervisor(int activityId, int lecturerId)
+        {
+            _activitySupervisorRepository.AddSupervisor(activityId, lecturerId);
+            return RedirectToAction("ManageSupervisors", new { activityId });
+        }
+        
+        [HttpPost]
+        public IActionResult RemoveSupervisor(int activityId, int lecturerId)
+        {
+            _activitySupervisorRepository.RemoveSupervisor(activityId, lecturerId);
+            return RedirectToAction("ManageSupervisors", new { activityId });
         }
     }
 }
