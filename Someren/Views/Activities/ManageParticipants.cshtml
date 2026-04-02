@@ -23,16 +23,14 @@
         function showFlash() {
             if (!flash) return;
 
-            flash.style.display = 'inline';   // show the message
-            clearTimeout(flash.timeout);       // clear previous timeout if it exists
+            flash.style.display = 'inline';   // to show the message
+            clearTimeout(flash.timeout);       
 
-            // hide after 2 seconds
             flash.timeout = setTimeout(() => {
                 flash.style.display = 'none';
             }, 1000);
         }
 
-        // If TempData has a message, show it
         @if (TempData["Message"] != null)
         {
                 <text>showFlash();</text>

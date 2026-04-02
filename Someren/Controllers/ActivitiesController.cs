@@ -101,7 +101,6 @@ namespace Someren.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-         //for Managing supervisors
         public IActionResult ManageSupervisors(int activityId)
         {
             var activity = _activityRepo.GetById(activityId);
@@ -132,8 +131,6 @@ namespace Someren.Controllers
             _activitySupervisorRepository.RemoveSupervisor(activityId, lecturerId);
             return RedirectToAction("ManageSupervisors", new { activityId });
         }
-
-        //for managing participants
 
         public IActionResult ManageParticipants(int activityId)
         {
