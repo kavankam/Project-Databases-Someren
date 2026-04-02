@@ -7,13 +7,17 @@
 <h1>Create Student</h1>
 
 <form action="/Students/Create" method="post">
-    @if (!ViewData.ModelState.IsValid)
+    @if (ViewData["ErrorMessage"] != null)
     {
-        <div class="text-danger">Please fix the errors below.</div>
+        <div class="text-danger">@ViewData["ErrorMessage"]</div>
     }
     <div class="mb-3">
         <label class="form-label">Student number</label>
         <input type="text" name="StudentNumber" value="@(Model?.StudentNumber)" class="form-control" />
+        @if (ViewData["StudentNumberError"] != null)
+        {
+            <div class="text-danger">@ViewData["StudentNumberError"]</div>
+        }
     </div>
     <div class="mb-3">
         <label class="form-label">First name</label>
@@ -34,11 +38,19 @@
     <div class="mb-3">
         <label class="form-label">Room</label>
         <select name="RoomID" class="form-select">
-            @if (ViewBag.RoomOptions != null)
+            <option value="">Select a room</option>
+            @if (ViewData["RoomOptions"] != null)
             {
-                foreach (var room in ViewBag.RoomOptions)
+                foreach (var room in (IEnumerable<dynamic>)ViewData["RoomOptions"])
                 {
-                    <option value="@room.Value">@room.Text</option>
+                    if (Model?.RoomID.HasValue == true && room.Value == Model.RoomID.Value.ToString())
+                    {
+                        <option value="@room.Value" selected>@room.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@room.Value">@room.Text</option>
+                    }
                 }
             }
         </select>
