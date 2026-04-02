@@ -13,20 +13,20 @@
     </div>
 }
 
-<form asp-action="Index" method="get" class="mb-3">
+<form action="/Activities" method="get" class="mb-3">
     <div class="row">
         <div class="col-md-4">
             <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" class="form-control" placeholder="Search by activity name" />
         </div>
         <div class="col-md-2">
             <button type="submit" class="btn btn-primary">Search</button>
-            <a asp-action="Index" class="btn btn-secondary">Clear</a>
+            <a href="/Activities" class="btn btn-secondary">Clear</a>
         </div>
     </div>
 </form>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Add New Activity</a>
+    <a href="/Activities/Create" class="btn btn-primary">Add New Activity</a>
 </p>
 
 <table class="table">
@@ -46,9 +46,9 @@
             <td>@activity.StartDateTime.ToString("yyyy-MM-dd HH:mm")</td>
             <td>@activity.DurationMinutes minutes</td>
             <td>
-                <a asp-action="Edit" asp-route-id="@activity.ActivityID" class="btn btn-sm btn-warning">Edit</a>
-                <a asp-action="Delete" asp-route-id="@activity.ActivityID" class="btn btn-sm btn-danger">Delete</a>
-                <a asp-action="ManageSupervisors" asp-route-activityId="@activity.ActivityID" class="btn btn-sm btn-warning">Manage Supervisors</a>
+                <a href="/Activities/Edit/@activity.ActivityID" class="btn btn-sm btn-warning">Edit</a>
+                <a href="/Activities/Delete/@activity.ActivityID" class="btn btn-sm btn-danger">Delete</a>
+                <a href="/Activities/ManageSupervisors?activityId=@activity.ActivityID" class="btn btn-sm btn-warning">Manage Supervisors</a>
             </td>
         </tr>
     }
