@@ -1,0 +1,34 @@
+@model Someren.Models.Activity
+
+@{
+    ViewData["Title"] = "Edit Activity";
+}
+
+<h1>Edit Activity</h1>
+
+<form asp-action="Edit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input asp-for="ActivityID" type="hidden" />
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Day" class="form-label"></label>
+        <input asp-for="Day" type="date" class="form-control" />
+        <span asp-validation-for="Day" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="TimeSlot" class="form-label">Start Time</label>
+        <input asp-for="TimeSlot" type="time" class="form-control" />
+        <span asp-validation-for="TimeSlot" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DurationMinutes" class="form-label">Duration (minutes)</label>
+        <input asp-for="DurationMinutes" class="form-control" />
+        <span asp-validation-for="DurationMinutes" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>

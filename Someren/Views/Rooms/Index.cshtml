@@ -1,0 +1,53 @@
+@model List<Someren.Models.Room>
+
+@{
+    ViewData["Title"] = "Rooms";
+}
+
+<h2>Rooms</h2>
+
+<p>
+    <a href="/Rooms/Create">Add new room</a>
+</p>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Room number</th>
+        <th>Floor</th>
+        <th>Building</th>
+        <th>Room size</th>
+        <th>Type of room</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var room in Model)
+    {
+        <tr>
+            <td>@room.RoomNumber</td>
+            <td>@room.Floor</td>
+            <td>
+                @if (room.BuildingID == 1)
+                {
+                    <span>A</span>
+                }
+                else if (room.BuildingID == 2)
+                {
+                    <span>B</span>
+                }
+                else
+                {
+                    <span>@room.BuildingID</span>
+                }
+            </td>
+            <td>@room.BedsCapacity</td>
+            <td>@room.RoomType</td>
+            <td>
+                <a href="/Rooms/Edit?id=@room.RoomID">Edit</a> |
+                <a href="/Rooms/Delete?id=@room.RoomID">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

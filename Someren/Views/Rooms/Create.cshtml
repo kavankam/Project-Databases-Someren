@@ -1,0 +1,47 @@
+@model Someren.Models.Room
+
+@{
+    ViewData["Title"] = "Add room";
+}
+
+<h2>Add room</h2>
+
+
+<form action="/Rooms/Create" method="post">
+    <div class="mb-3">
+        <label for="RoomNumber" class="form-label">Room number</label>
+        <input type="text" id="RoomNumber" name="RoomNumber" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="RoomType" class="form-label">Type of room</label>
+        <select name="RoomType" class="form-control" id="roomTypeSelect">
+            <option value="student">student</option>
+            <option value="lecturer">lecturer</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="Floor" class="form-label">Floor</label>
+        <select name="Floor" class="form-control" id="floorSelect">
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="BedsCapacity" class="form-label">Room size</label>
+        <input type="text" name="BedsCapacity" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="BuildingID" class="form-label">Building</label>
+        <select name="BuildingID" class="form-control" id="buildingIdInput">
+            <option value="1">A</option>
+            <option value="2">B</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="/Rooms/Index" class="btn btn-secondary">Back to list</a>
+</form>

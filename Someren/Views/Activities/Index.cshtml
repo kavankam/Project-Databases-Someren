@@ -1,0 +1,55 @@
+@model List<Someren.Models.Activity>
+
+@{
+    ViewData["Title"] = "Activities";
+}
+
+<h1>Activities</h1>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<form asp-action="Index" method="get" class="mb-3">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" class="form-control" placeholder="Search by activity name" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-action="Index" class="btn btn-secondary">Clear</a>
+        </div>
+    </div>
+</form>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add New Activity</a>
+</p>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Start Date/Time</th>
+        <th>Duration</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var activity in Model)
+    {
+        <tr>
+            <td>@activity.Name</td>
+            <td>@activity.StartDateTime.ToString("yyyy-MM-dd HH:mm")</td>
+            <td>@activity.DurationMinutes minutes</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@activity.ActivityID" class="btn btn-sm btn-warning">Edit</a>
+                <a asp-action="Delete" asp-route-id="@activity.ActivityID" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
