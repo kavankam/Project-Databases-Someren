@@ -19,9 +19,17 @@ public class StudentsController : Controller
 
     public IActionResult Index(string? searchTerm)
     {
-        ViewBag.SearchTerm = searchTerm;
-        List<Student> students = _studentRepository.GetAll(searchTerm);
-        return View(students);
+        try
+        {
+            ViewBag.SearchTerm = searchTerm;
+            List<Student> students = _studentRepository.GetAll(searchTerm);
+            return View(students);
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Students could not be loaded.";
+            return View(new List<Student>());
+        }
     }
 
     public IActionResult Create()
@@ -34,52 +42,86 @@ public class StudentsController : Controller
     [HttpPost]
     public IActionResult Create(Student student)
     {
-        if (StudentExists(student.StudentNumber, null))
+        try
         {
-            ModelState.AddModelError("StudentNumber", "This student number already exists.");
-        }
+            if (StudentExists(student.StudentNumber, null))
+            {
+                ModelState.AddModelError("StudentNumber", "This student number already exists.");
+            }
 
-        if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                ViewBag.RoomOptions = GetRoomOptions();
+                return View(student);
+            }
+
+            _studentRepository.Add(student);
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception)
         {
-            ViewBag.RoomOptions = GetRoomOptions(); 
+            ModelState.AddModelError("", "The student could not be added.");
+            ViewBag.RoomOptions = GetRoomOptions();
             return View(student);
         }
-
-        _studentRepository.Add(student);
-        return RedirectToAction(nameof(Index));
     }
 
     public IActionResult Edit(int id)
     {
-        Student? student = _studentRepository.GetById(id);
-        if (student == null) return NotFound();
-        ViewBag.RoomOptions = GetRoomOptions(); 
-        return View(student);
+        try
+        {
+            Student? student = _studentRepository.GetById(id);
+            if (student == null) return NotFound();
+            ViewBag.RoomOptions = GetRoomOptions();
+            return View(student);
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "The student could not be loaded.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 
     [HttpPost]
     public IActionResult Edit(Student student)
     {
-        if (StudentExists(student.StudentNumber, student.StudentID))
+        try
         {
-            ModelState.AddModelError("StudentNumber", "This student number already exists.");
-        }
+            if (StudentExists(student.StudentNumber, student.StudentID))
+            {
+                ModelState.AddModelError("StudentNumber", "This student number already exists.");
+            }
 
-        if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                ViewBag.RoomOptions = GetRoomOptions();
+                return View(student);
+            }
+
+            _studentRepository.Update(student);
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception)
         {
+            ModelState.AddModelError("", "The student could not be changed.");
             ViewBag.RoomOptions = GetRoomOptions();
             return View(student);
-        } 
-
-        _studentRepository.Update(student);
-        return RedirectToAction(nameof(Index));
+        }
     }
 
     public IActionResult Delete(int id)
     {
-        Student? student = _studentRepository.GetById(id);
-        if (student == null) return NotFound();
-        return View(student);
+        try
+        {
+            Student? student = _studentRepository.GetById(id);
+            if (student == null) return NotFound();
+            return View(student);
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "The student could not be loaded.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 
     [HttpPost]

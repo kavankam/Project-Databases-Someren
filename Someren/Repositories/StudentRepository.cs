@@ -64,6 +64,59 @@ WHERE StudentID = @StudentID;";
         return count > 0;
     }
 
+    public List<Student> GetStudentsByRoomId(int roomId)
+    {
+        const string query = @"SELECT StudentID, StudentNumber, Class, FirstName, LastName, PhoneNumber, RoomID
+FROM dbo.STUDENT
+WHERE RoomID = @RoomID
+ORDER BY LastName, FirstName;";
+
+        using SqlDataReader reader = GetReader(query, cmd => cmd.Parameters.AddWithValue("@RoomID", roomId));
+        return ReadStudents(reader);
+    }
+
+    public List<Student> GetStudentsWithoutRoom()
+    {
+        const string query = @"SELECT StudentID, StudentNumber, Class, FirstName, LastName, PhoneNumber, RoomID
+FROM dbo.STUDENT
+WHERE RoomID IS NULL
+ORDER BY LastName, FirstName;";
+
+        using SqlDataReader reader = GetReader(query, cmd => { });
+        return ReadStudents(reader);
+    }
+
+    public void AddStudentToRoom(int studentId, int roomId)
+    {
+        string query = @"UPDATE dbo.STUDENT
+SET RoomID = @RoomID
+WHERE StudentID = @StudentID;";
+
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            SqlCommand command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@StudentID", studentId);
+            command.Parameters.AddWithValue("@RoomID", roomId);
+            connection.Open();
+            command.ExecuteNonQuery();
+        }
+    }
+
+    public void RemoveStudentFromRoom(int studentId)
+    {
+        string query = @"UPDATE dbo.STUDENT
+SET RoomID = NULL
+WHERE StudentID = @StudentID;";
+
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            SqlCommand command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@StudentID", studentId);
+            connection.Open();
+            command.ExecuteNonQuery();
+        }
+    }
+
     private string GetAllQuery(string? searchTerm)
     {
         string query = @"SELECT StudentID, StudentNumber, Class, FirstName, LastName, PhoneNumber, RoomID
@@ -131,6 +184,7 @@ FROM dbo.STUDENT";
             command.Parameters.AddWithValue("@ExcludeStudentId", excludeStudentId.Value);
     }
 
+
     private void AddStudentParameters(SqlCommand command, Student student, bool includeId)
     {
         if (includeId) command.Parameters.AddWithValue("@StudentID", student.StudentID);
@@ -152,7 +206,7 @@ FROM dbo.STUDENT";
             FirstName = reader["FirstName"].ToString() ?? string.Empty,
             LastName = reader["LastName"].ToString() ?? string.Empty,
             PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? null : reader["PhoneNumber"].ToString(),
-            RoomID = Convert.ToInt32(reader["RoomID"])
+            RoomID = reader["RoomID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["RoomID"])
         };
     }
 }
