@@ -26,7 +26,7 @@ public class StudentsController : Controller
 
     public IActionResult Create()
     {
-        /* ViewBag.RoomOptions = GetRoomOptions(); */
+         ViewBag.RoomOptions = GetRoomOptions(); 
         Student student = new Student();
         return View(student);
     }
@@ -41,7 +41,7 @@ public class StudentsController : Controller
 
         if (!ModelState.IsValid)
         {
-            /* ViewBag.RoomOptions = GetRoomOptions(); */
+            ViewBag.RoomOptions = GetRoomOptions(); 
             return View(student);
         }
 
@@ -53,7 +53,7 @@ public class StudentsController : Controller
     {
         Student? student = _studentRepository.GetById(id);
         if (student == null) return NotFound();
-       /* ViewBag.RoomOptions = GetRoomOptions(); */
+        ViewBag.RoomOptions = GetRoomOptions(); 
         return View(student);
     }
 
@@ -65,11 +65,11 @@ public class StudentsController : Controller
             ModelState.AddModelError("StudentNumber", "This student number already exists.");
         }
 
-       /* if (!ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
             ViewBag.RoomOptions = GetRoomOptions();
             return View(student);
-        } */
+        } 
 
         _studentRepository.Update(student);
         return RedirectToAction(nameof(Index));
@@ -97,10 +97,10 @@ public class StudentsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-   /* private List<SelectListItem> GetRoomOptions()
+    private List<SelectListItem> GetRoomOptions()
     {
         List<SelectListItem> roomOptions = new List<SelectListItem>();
-        List<Room> rooms = _roomRepository.GetAll(null);
+        List<Room> rooms = _roomRepository.GetAllRooms();
 
         foreach (Room room in rooms)
         {
@@ -115,7 +115,7 @@ public class StudentsController : Controller
         }
 
         return roomOptions;
-    } */
+    } 
 
     private bool StudentExists(int studentNumber, int? excludeStudentId)
     {
