@@ -1,0 +1,48 @@
+@model Someren.Models.Student
+
+@{
+    ViewData["Title"] = "Create Student";
+}
+
+<h1>Create Student</h1>
+
+<form action="/Students/Create" method="post">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="text-danger">Please fix the errors below.</div>
+    }
+    <div class="mb-3">
+        <label class="form-label">Student number</label>
+        <input type="text" name="StudentNumber" value="@(Model?.StudentNumber)" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">First name</label>
+        <input type="text" name="FirstName" value="@(Model?.FirstName)" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Last name</label>
+        <input type="text" name="LastName" value="@(Model?.LastName)" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Phone number</label>
+        <input type="text" name="PhoneNumber" value="@(Model?.PhoneNumber)" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Class</label>
+        <input type="text" name="Class" value="@(Model?.Class)" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Room</label>
+        <select name="RoomID" class="form-select">
+            @if (ViewBag.RoomOptions != null)
+            {
+                foreach (var room in ViewBag.RoomOptions)
+                {
+                    <option value="@room.Value">@room.Text</option>
+                }
+            }
+        </select>
+    </div>
+    <input type="submit" value="Create" />
+    <a href="/Students">Back</a>
+</form>

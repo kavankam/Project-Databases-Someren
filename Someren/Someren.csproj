@@ -10,4 +10,11 @@
       <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Students\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Students\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Students\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Students\Index.cshtml" />
+    </ItemGroup>
+
 </Project>
