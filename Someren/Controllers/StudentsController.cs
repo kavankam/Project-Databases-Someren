@@ -146,7 +146,7 @@ public class StudentsController : Controller
     private List<SelectListItem> GetRoomOptions()
     {
         List<SelectListItem> roomOptions = new List<SelectListItem>();
-        List<Room> rooms = _roomRepository.GetAllRooms();
+        List<Room> rooms = _roomRepository.GetAllRooms(null);
 
         foreach (Room room in rooms)
         {
