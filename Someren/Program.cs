@@ -1,4 +1,3 @@
-using Someren.Models;
 using Someren.Repositories;
 
 namespace Someren
@@ -16,6 +15,8 @@ namespace Someren
             builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
             builder.Services.AddScoped<IActivitySupervisorRepository, ActivitySupervisorRepository>();
             builder.Services.AddScoped<IActivityParticipantRepository, ActivityParticipantRepository>();
+            builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
             var app = builder.Build();
 

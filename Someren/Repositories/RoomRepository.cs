@@ -10,20 +10,34 @@ namespace Someren.Repositories
         public RoomRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("SomerenDatabase");
+
+            if (_connectionString == null)
+            {
+                throw new InvalidOperationException("Connection string could not be found.");
+            }
         }
 
-        public List<Room> GetAllRooms()
+        public List<Room> GetAllRooms(int? bedsCapacity)
         {
             List<Room> rooms = new List<Room>();
 
             string query = @"
                 SELECT RoomID, RoomNumber, Floor, RoomType, BedsCapacity, BuildingID
                 FROM dbo.ROOM
-                ORDER BY RoomNumber";
+                WHERE (@bedsCapacity IS NULL OR BedsCapacity = @bedsCapacity)
+                ORDER BY TRY_CAST(RoomNumber AS INT), RoomNumber";
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 SqlCommand command = new SqlCommand(query, connection);
+                if (bedsCapacity == null)
+                {
+                    command.Parameters.AddWithValue("@bedsCapacity", DBNull.Value);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@bedsCapacity", bedsCapacity);
+                }
                 connection.Open();
 
                 SqlDataReader reader = command.ExecuteReader();

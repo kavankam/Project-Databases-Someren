@@ -14,5 +14,15 @@ namespace Someren.Models
             RoomNumber = string.Empty;
             RoomType = string.Empty;
         }
+
+        public Room(int roomID, string roomNumber, int floor, string roomType, int bedsCapacity, int buildingID)
+        {
+            RoomID = roomID;
+            RoomNumber = roomNumber;
+            Floor = floor;
+            RoomType = roomType;
+            BedsCapacity = bedsCapacity;
+            BuildingID = buildingID;
+        }
     }
 }

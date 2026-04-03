@@ -6,6 +6,11 @@
 
 <h2>Add room</h2>
 
+@if (ViewData["ErrorMessage"] != null)
+{
+    <p>@ViewData["ErrorMessage"]</p>
+}
+
 
 <form action="/Rooms/Create" method="post">
     <div class="mb-3">

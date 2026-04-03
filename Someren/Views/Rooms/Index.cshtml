@@ -4,7 +4,20 @@
     ViewData["Title"] = "Rooms";
 }
 
+
 <h2>Rooms</h2>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <p>@ViewData["ErrorMessage"]</p>
+}
+
+<form action="/Rooms/Index" method="get">
+    <label for="bedsCapacity">Filter by room size:</label>
+    <input type="text" id="bedsCapacity" name="bedsCapacity" value="@ViewData["BedsCapacity"]" />
+    <button type="submit">Filter</button>
+    <a href="/Rooms/Index">Clear</a>
+</form>
 
 <p>
     <a href="/Rooms/Create">Add new room</a>

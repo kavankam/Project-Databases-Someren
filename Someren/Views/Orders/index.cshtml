@@ -1,0 +1,110 @@
+@using Someren.Models
+
+@{
+    ViewData["Title"] = "Place a Drink Order";
+    List<Student> students = (List<Student>)ViewData["Students"];
+    List<Drink> drinks = (List<Drink>)ViewData["Drinks"];
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="mb-4">Place a Drink Order</h2>
+
+            @if (ViewData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@ViewData["ErrorMessage"]</div>
+            }
+
+            @if (ViewData["Message"] != null)
+            {
+                <div class="alert alert-success">@ViewData["Message"]</div>
+            }
+
+            <h3 class="mt-4">Students</h3>
+            <table class="table table-bordered table-striped mb-4">
+                <thead>
+                    <tr>
+                        <th>First name</th>
+                        <th>Last name</th>
+                        <th>Phone number</th>
+                        <th>Student number</th>
+                        <th>Class</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Student student in students)
+                    {
+                        <tr>
+                            <td>@student.FirstName</td>
+                            <td>@student.LastName</td>
+                            <td>@student.PhoneNumber</td>
+                            <td>@student.StudentNumber</td>
+                            <td>@student.Class</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <h3>Drinks</h3>
+            <table class="table table-bordered table-striped mb-4">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Alcoholic</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Drink drink in drinks)
+                    {
+                        <tr>
+                            <td>@drink.Name</td>
+                            <td>@drink.Price</td>
+                            <td>@drink.Stock</td>
+                            <td>@(drink.IsAlcoholic ? "Yes" : "No")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <h3>Place order</h3>
+            <form action="/Orders/ConfirmOrder" method="post">
+
+                <div class="mb-3">
+                    <label for="StudentID" class="form-label">Select Student</label>
+                    <select name="StudentID" id="StudentID" class="form-control" required>
+                        <option value=""> Choose a Student </option>
+                        @foreach (Student student in students)
+                        {
+                            <option value="@student.StudentID">@student.FirstName @student.LastName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="DrinkID" class="form-label">Select Drink</label>
+                    <select name="DrinkID" id="DrinkID" class="form-control" required>
+                        <option value=""> Choose a Drink </option>
+                        @foreach (Drink drink in drinks)
+                        {
+                            <option value="@drink.DrinkID">@drink.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Quantity" class="form-label">Quantity (Count)</label>
+                    <input type="number" name="Quantity" id="Quantity" value="1" min="1" class="form-control" required />
+                </div>
+
+                <button type="submit" class="btn btn-success">Submit Order</button>
+            </form>
+
+            <p class="mt-3">
+                <a href="/Home/Index">Back to Home</a>
+            </p>
+        </div>
+    </div>
+</div>

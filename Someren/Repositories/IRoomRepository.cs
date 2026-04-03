@@ -4,7 +4,7 @@ namespace Someren.Repositories
 {
     public interface IRoomRepository
     {
-        List<Room> GetAllRooms();
+        List<Room> GetAllRooms(int? bedsCapacity);
         Room? GetById(int id);
         void Add(Room room);
         void Update(Room room);
