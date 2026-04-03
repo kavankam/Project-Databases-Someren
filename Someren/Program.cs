@@ -1,3 +1,4 @@
+using Someren.Models;
 using Someren.Repositories;
 
 namespace Someren
