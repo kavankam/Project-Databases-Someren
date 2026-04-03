@@ -64,6 +64,59 @@ WHERE StudentID = @StudentID;";
         return count > 0;
     }
 
+    public List<Student> GetStudentsByRoomId(int roomId)
+    {
+        const string query = @"SELECT StudentID, StudentNumber, Class, FirstName, LastName, PhoneNumber, RoomID
+FROM dbo.STUDENT
+WHERE RoomID = @RoomID
+ORDER BY LastName, FirstName;";
+
+        using SqlDataReader reader = GetReader(query, cmd => cmd.Parameters.AddWithValue("@RoomID", roomId));
+        return ReadStudents(reader);
+    }
+
+    public List<Student> GetStudentsWithoutRoom()
+    {
+        const string query = @"SELECT StudentID, StudentNumber, Class, FirstName, LastName, PhoneNumber, RoomID
+FROM dbo.STUDENT
+WHERE RoomID IS NULL
+ORDER BY LastName, FirstName;";
+
+        using SqlDataReader reader = GetReader(query, cmd => { });
+        return ReadStudents(reader);
+    }
+
+    public void AddStudentToRoom(int studentId, int roomId)
+    {
+        string query = @"UPDATE dbo.STUDENT
+SET RoomID = @RoomID
+WHERE StudentID = @StudentID;";
+
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            SqlCommand command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@StudentID", studentId);
+            command.Parameters.AddWithValue("@RoomID", roomId);
+            connection.Open();
+            command.ExecuteNonQuery();
+        }
+    }
+
+    public void RemoveStudentFromRoom(int studentId)
+    {
+        string query = @"UPDATE dbo.STUDENT
+SET RoomID = NULL
+WHERE StudentID = @StudentID;";
+
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            SqlCommand command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@StudentID", studentId);
+            connection.Open();
+            command.ExecuteNonQuery();
+        }
+    }
+
     private string GetAllQuery(string? searchTerm)
     {
         string query = @"SELECT StudentID, StudentNumber, Class, FirstName, LastName, PhoneNumber, RoomID
@@ -81,8 +134,8 @@ FROM dbo.STUDENT";
 
     private SqlDataReader GetReader(string query, Action<SqlCommand> addParameters)
     {
-        SqlConnection connection = new(_connectionString);
-        SqlCommand command = new(query, connection);
+        SqlConnection connection = new SqlConnection(_connectionString);
+        SqlCommand command = new SqlCommand(query, connection);
         addParameters(command);
         connection.Open();
         return command.ExecuteReader(CommandBehavior.CloseConnection);
@@ -90,20 +143,26 @@ FROM dbo.STUDENT";
 
     private List<Student> ReadStudents(SqlDataReader reader)
     {
-        List<Student> students = new();
-        while (reader.Read()) students.Add(MapStudent(reader));
+        List<Student> students = new List<Student>();
+
+        while (reader.Read())
+        {
+            Student student = MapStudent(reader);
+            students.Add(student);
+        }
+
         return students;
     }
 
     private void ExecuteStudentQuery(string query, Student student, bool includeId = false)
     {
-        ExecuteQuery(query, cmd => AddStudentParameters(cmd, student, includeId));
+        ExecuteQuery(query, command => AddStudentParameters(command, student, includeId));
     }
 
     private void ExecuteQuery(string query, Action<SqlCommand> addParameters)
     {
-        using SqlConnection connection = new(_connectionString);
-        using SqlCommand command = new(query, connection);
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        using SqlCommand command = new SqlCommand(query, connection);
         addParameters(command);
         connection.Open();
         command.ExecuteNonQuery();
@@ -111,8 +170,8 @@ FROM dbo.STUDENT";
 
     private int CountStudents(string query, int studentNumber, int? excludeStudentId)
     {
-        using SqlConnection connection = new(_connectionString);
-        using SqlCommand command = new(query, connection);
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        using SqlCommand command = new SqlCommand(query, connection);
         AddExistsParameters(command, studentNumber, excludeStudentId);
         connection.Open();
         return (int)command.ExecuteScalar()!;
@@ -131,28 +190,32 @@ FROM dbo.STUDENT";
             command.Parameters.AddWithValue("@ExcludeStudentId", excludeStudentId.Value);
     }
 
+
     private void AddStudentParameters(SqlCommand command, Student student, bool includeId)
     {
-        if (includeId) command.Parameters.AddWithValue("@StudentID", student.StudentID);
+        if (includeId)
+        {
+            command.Parameters.AddWithValue("@StudentID", student.StudentID);
+        }
+
         command.Parameters.AddWithValue("@StudentNumber", student.StudentNumber);
         command.Parameters.AddWithValue("@Class", student.Class);
         command.Parameters.AddWithValue("@FirstName", student.FirstName);
         command.Parameters.AddWithValue("@LastName", student.LastName);
         command.Parameters.AddWithValue("@PhoneNumber", (object?)student.PhoneNumber ?? DBNull.Value);
-        command.Parameters.AddWithValue("@RoomID", student.RoomID);
+        command.Parameters.AddWithValue("@RoomID", (object?)student.RoomID ?? DBNull.Value);
     }
 
     private Student MapStudent(SqlDataReader reader)
     {
-        return new Student
-        {
-            StudentID = Convert.ToInt32(reader["StudentID"]),
-            StudentNumber = Convert.ToInt32(reader["StudentNumber"]),
-            Class = reader["Class"].ToString() ?? string.Empty,
-            FirstName = reader["FirstName"].ToString() ?? string.Empty,
-            LastName = reader["LastName"].ToString() ?? string.Empty,
-            PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? null : reader["PhoneNumber"].ToString(),
-            RoomID = Convert.ToInt32(reader["RoomID"])
-        };
+        Student student = new Student();
+        student.StudentID = Convert.ToInt32(reader["StudentID"]);
+        student.StudentNumber = Convert.ToInt32(reader["StudentNumber"]);
+        student.Class = reader["Class"].ToString() ?? string.Empty;
+        student.FirstName = reader["FirstName"].ToString() ?? string.Empty;
+        student.LastName = reader["LastName"].ToString() ?? string.Empty;
+        student.PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? null : reader["PhoneNumber"].ToString();
+        student.RoomID = reader["RoomID"] == DBNull.Value ? null : Convert.ToInt32(reader["RoomID"]);
+        return student;
     }
 }

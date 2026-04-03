@@ -1,0 +1,88 @@
+@model Someren.ViewModels.DormitoryStudentsViewModel
+
+@{
+    ViewData["Title"] = "Dormitory Students";
+}
+
+<h1>Dormitory Students</h1>
+
+@if (TempData["Message"] != null)
+{
+    <p>@TempData["Message"]</p>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <p>@TempData["ErrorMessage"]</p>
+}
+
+<h2>Selected dormitory</h2>
+<p>Room number: @Model.Room.RoomNumber</p>
+<p>Room type: @Model.Room.RoomType</p>
+<p>Room size: @Model.Room.BedsCapacity</p>
+
+<h2>Students in this dormitory</h2>
+
+@if (Model.DormitoryStudents.Count == 0)
+{
+    <p>There are no students in this dormitory.</p>
+}
+else
+{
+    <table>
+        <tr>
+            <th>Student number</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Class</th>
+            <th></th>
+        </tr>
+        @foreach (var student in Model.DormitoryStudents)
+        {
+            <tr>
+                <td>@student.StudentNumber</td>
+                <td>@student.FirstName</td>
+                <td>@student.LastName</td>
+                <td>@student.Class</td>
+                <td>
+                    <a href="/Rooms/RemoveDormitoryStudent?roomId=@Model.Room.RoomID&studentId=@student.StudentID">Remove</a>
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+<h2>Students without a room</h2>
+
+@if (Model.RoomlessStudents.Count == 0)
+{
+    <p>There are no students without a room.</p>
+}
+else
+{
+    <table>
+        <tr>
+            <th>Student number</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Class</th>
+            <th></th>
+        </tr>
+        @foreach (var student in Model.RoomlessStudents)
+        {
+            <tr>
+                <td>@student.StudentNumber</td>
+                <td>@student.FirstName</td>
+                <td>@student.LastName</td>
+                <td>@student.Class</td>
+                <td>
+                    <a href="/Rooms/AddDormitoryStudent?roomId=@Model.Room.RoomID&studentId=@student.StudentID">Add</a>
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+<p>
+    <a href="/Rooms">Back to rooms</a>
+</p>
