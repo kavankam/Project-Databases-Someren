@@ -24,6 +24,7 @@ public class Program
         services.AddScoped<ILecturerRepository, LecturerRepository>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<IActivitySupervisorRepository, ActivitySupervisorRepository>();
+        services.AddScoped<IActivityParticipantRepository, ActivityParticipantRepository>();
     }
 
     private void ConfigurePipeline(WebApplication app)

@@ -108,7 +108,7 @@ namespace Someren.Repositories
 
         public bool SaveChanges()
         {            
-            return true; //automatic save apply already,
+            return true; 
         }
     }
 }

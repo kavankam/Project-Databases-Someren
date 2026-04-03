@@ -46,9 +46,10 @@
             <td>@activity.StartDateTime.ToString("yyyy-MM-dd HH:mm")</td>
             <td>@activity.DurationMinutes minutes</td>
             <td>
-                <a href="/Activities/Edit/@activity.ActivityID" class="btn btn-sm btn-warning">Edit</a>
-                <a href="/Activities/Delete/@activity.ActivityID" class="btn btn-sm btn-danger">Delete</a>
-                <a href="/Activities/ManageSupervisors?activityId=@activity.ActivityID" class="btn btn-sm btn-warning">Manage Supervisors</a>
+                <a asp-action="Edit" asp-route-id="@activity.ActivityID" class="btn btn-sm btn-warning">Edit</a>
+                <a asp-action="Delete" asp-route-id="@activity.ActivityID" class="btn btn-sm btn-danger">Delete</a>
+                <a asp-action="ManageSupervisors" asp-route-activityId="@activity.ActivityID" class="btn btn-sm btn-warning">Manage Supervisors</a>
+                <a asp-action="ManageParticipants" asp-route-activityId="@activity.ActivityID" class="btn btn-sm btn-warning">Manage Participants</a>
             </td>
         </tr>
     }
