@@ -13,20 +13,20 @@
     </div>
 }
 
-<form asp-action="Index" method="get" class="mb-3">
+<form action="/Activities" method="get" class="mb-3">
     <div class="row">
         <div class="col-md-4">
             <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" class="form-control" placeholder="Search by activity name" />
         </div>
         <div class="col-md-2">
             <button type="submit" class="btn btn-primary">Search</button>
-            <a asp-action="Index" class="btn btn-secondary">Clear</a>
+            <a href="/Activities" class="btn btn-secondary">Clear</a>
         </div>
     </div>
 </form>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Add New Activity</a>
+    <a href="/Activities/Create" class="btn btn-primary">Add New Activity</a>
 </p>
 
 <table class="table">

@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Someren.Models;
 using Someren.Repositories;
 
-namespace Someren.Controllers;
+namespace Someren.Controllers
+{
 
 public class StudentsController : Controller
 {
-    private const string StudentRoomType = "Student";
     private readonly IStudentRepository _studentRepository;
     private readonly IRoomRepository _roomRepository;
 
@@ -21,7 +21,7 @@ public class StudentsController : Controller
     {
         try
         {
-            ViewBag.SearchTerm = searchTerm;
+            ViewData["SearchTerm"] = searchTerm;
             List<Student> students = _studentRepository.GetAll(searchTerm);
             return View(students);
         }
@@ -34,9 +34,17 @@ public class StudentsController : Controller
 
     public IActionResult Create()
     {
-         ViewBag.RoomOptions = GetRoomOptions(); 
-        Student student = new Student();
-        return View(student);
+        try
+        {
+            ViewData["RoomOptions"] = GetRoomOptions();
+            Student student = new Student();
+            return View(student);
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "The student form could not be loaded.";
+            return RedirectToAction("Index");
+        }
     }
 
     [HttpPost]
@@ -44,24 +52,22 @@ public class StudentsController : Controller
     {
         try
         {
-            if (StudentExists(student.StudentNumber, null))
-            {
-                ModelState.AddModelError("StudentNumber", "This student number already exists.");
-            }
+            bool studentExists = StudentExists(student.StudentNumber, null);
 
-            if (!ModelState.IsValid)
+            if (studentExists)
             {
-                ViewBag.RoomOptions = GetRoomOptions();
+                ViewData["StudentNumberError"] = "This student number already exists.";
+                ViewData["RoomOptions"] = GetRoomOptions();
                 return View(student);
             }
 
             _studentRepository.Add(student);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
         catch (Exception)
         {
-            ModelState.AddModelError("", "The student could not be added.");
-            ViewBag.RoomOptions = GetRoomOptions();
+            ViewData["ErrorMessage"] = "The student could not be added.";
+            ViewData["RoomOptions"] = GetRoomOptions();
             return View(student);
         }
     }
@@ -70,15 +76,15 @@ public class StudentsController : Controller
     {
         try
         {
-            Student? student = _studentRepository.GetById(id);
+            Student student = _studentRepository.GetById(id);
             if (student == null) return NotFound();
-            ViewBag.RoomOptions = GetRoomOptions();
+            ViewData["RoomOptions"] = GetRoomOptions();
             return View(student);
         }
         catch (Exception)
         {
             TempData["ErrorMessage"] = "The student could not be loaded.";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
     }
 
@@ -87,24 +93,22 @@ public class StudentsController : Controller
     {
         try
         {
-            if (StudentExists(student.StudentNumber, student.StudentID))
-            {
-                ModelState.AddModelError("StudentNumber", "This student number already exists.");
-            }
+            bool studentExists = StudentExists(student.StudentNumber, student.StudentID);
 
-            if (!ModelState.IsValid)
+            if (studentExists)
             {
-                ViewBag.RoomOptions = GetRoomOptions();
+                ViewData["StudentNumberError"] = "This student number already exists.";
+                ViewData["RoomOptions"] = GetRoomOptions();
                 return View(student);
             }
 
             _studentRepository.Update(student);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
         catch (Exception)
         {
-            ModelState.AddModelError("", "The student could not be changed.");
-            ViewBag.RoomOptions = GetRoomOptions();
+            ViewData["ErrorMessage"] = "The student could not be changed.";
+            ViewData["RoomOptions"] = GetRoomOptions();
             return View(student);
         }
     }
@@ -113,14 +117,14 @@ public class StudentsController : Controller
     {
         try
         {
-            Student? student = _studentRepository.GetById(id);
+            Student student = _studentRepository.GetById(id);
             if (student == null) return NotFound();
             return View(student);
         }
         catch (Exception)
         {
             TempData["ErrorMessage"] = "The student could not be loaded.";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
     }
 
@@ -136,7 +140,7 @@ public class StudentsController : Controller
             TempData["ErrorMessage"] = "This student cannot be deleted because it is still linked to other data.";
         }
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction("Index");
     }
 
     private List<SelectListItem> GetRoomOptions()
@@ -146,21 +150,25 @@ public class StudentsController : Controller
 
         foreach (Room room in rooms)
         {
-            if (room.RoomType != null &&
-                room.RoomType.Equals(StudentRoomType, StringComparison.OrdinalIgnoreCase))
+            if (room.RoomType != null)
             {
-                SelectListItem option = new SelectListItem();
-                option.Value = room.RoomID.ToString();
-                option.Text = room.RoomNumber;
-                roomOptions.Add(option);
+                if (room.RoomType.ToLower() == "student")
+                {
+                    SelectListItem option = new SelectListItem();
+                    option.Value = room.RoomID.ToString();
+                    option.Text = room.RoomNumber;
+                    roomOptions.Add(option);
+                }
             }
         }
 
         return roomOptions;
-    } 
+    }
 
     private bool StudentExists(int studentNumber, int? excludeStudentId)
     {
-        return _studentRepository.StudentNumberExists(studentNumber, excludeStudentId);
+        bool studentExists = _studentRepository.StudentNumberExists(studentNumber, excludeStudentId);
+        return studentExists;
     }
+}
 }
