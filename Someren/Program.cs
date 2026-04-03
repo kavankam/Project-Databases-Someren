@@ -23,6 +23,8 @@ public class Program
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<ILecturerRepository, LecturerRepository>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
+        services.AddScoped<IDrinkRepository, DrinkRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
     }
 
     private void ConfigurePipeline(WebApplication app)

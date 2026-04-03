@@ -1,0 +1,35 @@
+@model Someren.Models.Order
+@using Someren.Models
+
+@{
+    ViewData["Title"] = "Confirm drink order";
+    Student student = (Student)ViewData["Student"];
+    Drink drink = (Drink)ViewData["Drink"];
+    int quantity = (int)ViewData["Quantity"];
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="mb-4">Confirm drink order</h2>
+
+            @if (ViewData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@ViewData["ErrorMessage"]</div>
+            }
+
+            <p><strong>Student:</strong> @student.FirstName @student.LastName</p>
+            <p><strong>Drink:</strong> @drink.Name</p>
+            <p><strong>Count:</strong> @quantity</p>
+
+            <form action="/Orders/ProcessOrder" method="post">
+                <input type="hidden" name="StudentID" value="@Model.StudentID" />
+                <input type="hidden" name="DrinkID" value="@Model.DrinkID" />
+                <input type="hidden" name="Quantity" value="@Model.Quantity" />
+
+                <button type="submit" class="btn btn-success">Confirm</button>
+                <a href="/Orders/Index" class="btn btn-link">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

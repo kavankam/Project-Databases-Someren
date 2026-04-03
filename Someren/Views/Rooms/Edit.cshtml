@@ -5,6 +5,10 @@
 }
 
 <h2>Edit room</h2>
+@if (ViewData["ErrorMessage"] != null)
+{
+    <p>@ViewData["ErrorMessage"]</p>
+}
 
 <form action="/Rooms/Edit" method="post">
     <input type="hidden" name="RoomID" value="@Model.RoomID" />
