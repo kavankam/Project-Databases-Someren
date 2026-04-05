@@ -9,9 +9,6 @@
 <p>Are you sure you want to delete this activity?</p>
 
 <dl class="row">
-    <dt class="col-sm-3">Activity ID</dt>
-    <dd class="col-sm-9">@Model.ActivityID</dd>
-
     <dt class="col-sm-3">Name</dt>
     <dd class="col-sm-9">@Model.Name</dd>
 
@@ -22,8 +19,8 @@
     <dd class="col-sm-9">@Model.TimeSlot</dd>
 </dl>
 
-<form asp-action="DeleteConfirmed" method="post">
+<form action="/Activities/DeleteConfirmed" method="post">
     <input type="hidden" name="activityId" value="@Model.ActivityID" />
     <button type="submit" class="btn btn-danger">Delete</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
+    <a href="/Activities" class="btn btn-secondary">Back</a>
 </form>

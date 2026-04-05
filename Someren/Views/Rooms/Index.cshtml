@@ -59,6 +59,10 @@
             <td>
                 <a href="/Rooms/Edit?id=@room.RoomID">Edit</a> |
                 <a href="/Rooms/Delete?id=@room.RoomID">Delete</a>
+                @if (room.RoomType != null && room.RoomType.ToLower() == "student")
+                {
+                    <text> | </text><a href="/Rooms/DormitoryStudents?roomId=@room.RoomID">Dormitory students</a>
+                }
             </td>
         </tr>
     }

@@ -8,10 +8,16 @@ namespace Someren.Controllers
     public class ActivitiesController : Controller
     {
         private readonly IActivityRepository _activityRepo;
+        private readonly IActivitySupervisorRepository _activitySupervisorRepository;
+        private readonly IActivityParticipantRepository _activityParticipantRepository;
 
-        public ActivitiesController(IActivityRepository activityRepo)
+
+        public ActivitiesController(IActivityRepository activityRepo, IActivitySupervisorRepository activitySupervisorRepository, IActivityParticipantRepository activityParticipantRepository)
         {
             _activityRepo = activityRepo;
+            _activitySupervisorRepository = activitySupervisorRepository;
+            _activityParticipantRepository = activityParticipantRepository;
+
         }
 
         public IActionResult Index(string? searchTerm)
@@ -94,6 +100,69 @@ namespace Someren.Controllers
                 _activityRepo.SaveChanges();
             }
             return RedirectToAction(nameof(Index));
+        }
+        public IActionResult ManageSupervisors(int activityId)
+        {
+            var activity = _activityRepo.GetById(activityId);
+
+            var supervisors = _activitySupervisorRepository.GetSupervisors(activityId);
+            var nonSupervisors = _activitySupervisorRepository.GetNonSupervisors(activityId);
+
+            var manageSupervisorModel = new ManageSupervisorsModel
+            {
+                Activity = activity,
+                Supervisors = supervisors,
+                NonSupervisors = nonSupervisors
+            };
+
+            return View(manageSupervisorModel);
+        }
+        
+        [HttpPost]
+        public IActionResult AddSupervisor(int activityId, int lecturerId)
+        {
+            _activitySupervisorRepository.AddSupervisor(activityId, lecturerId);
+            return RedirectToAction("ManageSupervisors", new { activityId });
+        }
+        
+        [HttpPost]
+        public IActionResult RemoveSupervisor(int activityId, int lecturerId)
+        {
+            _activitySupervisorRepository.RemoveSupervisor(activityId, lecturerId);
+            return RedirectToAction("ManageSupervisors", new { activityId });
+        }
+
+        public IActionResult ManageParticipants(int activityId)
+        {
+            var activity = _activityRepo.GetById(activityId);
+
+            var participants = _activityParticipantRepository.GetParticipants(activityId);
+            var nonParticipants = _activityParticipantRepository.GetNonParticipants(activityId);
+
+            var manageParticipantsModel = new ManageParticipantsModel
+            {
+                Activity = activity,
+                Participants = participants,
+                NonParticipants = nonParticipants
+            };
+
+            return View(manageParticipantsModel);
+        }
+
+        [HttpPost]
+        public IActionResult AddParticipant(int activityId, int studentId)
+        {
+            _activityParticipantRepository.AddParticipant(activityId, studentId);
+            TempData["Message"] = "Successfully added as participant"; //confirmation message
+            return RedirectToAction("ManageParticipants", new { activityId });
+        }
+
+        [HttpPost]
+        public IActionResult RemoveParticipant(int activityId, int studentId)
+        {
+            _activityParticipantRepository.RemoveParticipant(activityId, studentId);
+            TempData["Message"] = "Successfully removed as participant"; //confirmation message/delete
+            return RedirectToAction("ManageParticipants", new { activityId });
         }
     }
 }
