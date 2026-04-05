@@ -1,11 +1,8 @@
-@model Someren.Models.Order
+@model Someren.Models.DrinkOrderViewModel
 @using Someren.Models
 
 @{
     ViewData["Title"] = "Confirm drink order";
-    Student student = (Student)ViewData["Student"];
-    Drink drink = (Drink)ViewData["Drink"];
-    int quantity = (int)ViewData["Quantity"];
 }
 
 <div class="container mt-4">
@@ -18,9 +15,9 @@
                 <div class="alert alert-danger">@ViewData["ErrorMessage"]</div>
             }
 
-            <p><strong>Student:</strong> @student.FirstName @student.LastName</p>
-            <p><strong>Drink:</strong> @drink.Name</p>
-            <p><strong>Count:</strong> @quantity</p>
+            <p><strong>Student:</strong> @Model.SelectedStudent.FirstName @Model.SelectedStudent.LastName</p>
+            <p><strong>Drink:</strong> @Model.SelectedDrink.Name</p>
+            <p><strong>Count:</strong> @Model.Quantity</p>
 
             <form action="/Orders/ProcessOrder" method="post">
                 <input type="hidden" name="StudentID" value="@Model.StudentID" />

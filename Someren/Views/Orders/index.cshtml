@@ -1,9 +1,8 @@
+@model Someren.Models.DrinkOrderViewModel
 @using Someren.Models
 
 @{
     ViewData["Title"] = "Place a Drink Order";
-    List<Student> students = (List<Student>)ViewData["Students"];
-    List<Drink> drinks = (List<Drink>)ViewData["Drinks"];
 }
 
 <div class="container mt-4">
@@ -33,7 +32,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (Student student in students)
+                    @foreach (Student student in Model.Students)
                     {
                         <tr>
                             <td>@student.FirstName</td>
@@ -57,7 +56,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (Drink drink in drinks)
+                    @foreach (Drink drink in Model.Drinks)
                     {
                         <tr>
                             <td>@drink.Name</td>
@@ -76,7 +75,7 @@
                     <label for="StudentID" class="form-label">Select Student</label>
                     <select name="StudentID" id="StudentID" class="form-control" required>
                         <option value=""> Choose a Student </option>
-                        @foreach (Student student in students)
+                        @foreach (Student student in Model.Students)
                         {
                             <option value="@student.StudentID">@student.FirstName @student.LastName</option>
                         }
@@ -87,7 +86,7 @@
                     <label for="DrinkID" class="form-label">Select Drink</label>
                     <select name="DrinkID" id="DrinkID" class="form-control" required>
                         <option value=""> Choose a Drink </option>
-                        @foreach (Drink drink in drinks)
+                        @foreach (Drink drink in Model.Drinks)
                         {
                             <option value="@drink.DrinkID">@drink.Name</option>
                         }
@@ -96,7 +95,7 @@
 
                 <div class="mb-3">
                     <label for="Quantity" class="form-label">Quantity (Count)</label>
-                    <input type="number" name="Quantity" id="Quantity" value="1" min="1" class="form-control" required />
+                    <input type="number" name="Quantity" id="Quantity" value="@Model.Quantity" min="1" class="form-control" required />
                 </div>
 
                 <button type="submit" class="btn btn-success">Submit Order</button>

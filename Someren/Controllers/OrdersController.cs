@@ -22,99 +22,96 @@ public class OrdersController : Controller
     {
         try
         {
-            List<Student> students = _studentRepository.GetAll(null);
-            List<Drink> drinks = _drinkRepository.GetAllDrinks();
+            DrinkOrderViewModel model = new DrinkOrderViewModel();
+            model.Students = _studentRepository.GetAll(null);
+            model.Drinks = _drinkRepository.GetAllDrinks();
 
-            ViewData["Students"] = students;
-            ViewData["Drinks"] = drinks;
-
-            return View();
+            return View(model);
         }
         catch (Exception)
         {
             ViewData["ErrorMessage"] = "Something went wrong while loading students and drinks.";
-            ViewData["Students"] = new List<Student>();
-            ViewData["Drinks"] = new List<Drink>();
-            return View();
+            return View(new DrinkOrderViewModel());
         }
     }
 
     [HttpPost]
-    public IActionResult ConfirmOrder(Order order)
+    public IActionResult ConfirmOrder(DrinkOrderViewModel model)
     {
         try
         {
-            Student? student = _studentRepository.GetById(order.StudentID);
-            Drink? drink = _drinkRepository.GetById(order.DrinkID);
+            Student? student = _studentRepository.GetById(model.StudentID);
+            Drink? drink = _drinkRepository.GetById(model.DrinkID);
 
             if (student == null || drink == null)
             {
                 return RedirectToAction("Index");
             }
 
-            ViewData["Student"] = student;
-            ViewData["Drink"] = drink;
-            ViewData["Quantity"] = order.Quantity;
+            model.SelectedStudent = student;
+            model.SelectedDrink = drink;
 
-            return View(order);
+            return View(model);
         }
         catch (Exception)
         {
             ViewData["ErrorMessage"] = "Something went wrong while confirming the order.";
-            ViewData["Students"] = _studentRepository.GetAll(null);
-            ViewData["Drinks"] = _drinkRepository.GetAllDrinks();
-            return View("Index");
+            DrinkOrderViewModel newModel = new DrinkOrderViewModel();
+            newModel.Students = _studentRepository.GetAll(null);
+            newModel.Drinks = _drinkRepository.GetAllDrinks();
+            return View("Index", newModel);
         }
     }
 
     [HttpPost]
-    public IActionResult ProcessOrder(Order order)
+    public IActionResult ProcessOrder(DrinkOrderViewModel model)
     {
         try
         {
-            Drink? drink = _drinkRepository.GetById(order.DrinkID);
-            Student? student = _studentRepository.GetById(order.StudentID);
+            Drink? drink = _drinkRepository.GetById(model.DrinkID);
+            Student? student = _studentRepository.GetById(model.StudentID);
 
             if (drink == null || student == null)
             {
                 return RedirectToAction("Index");
             }
 
-            if (order.Quantity <= 0)
+            if (model.Quantity <= 0)
             {
                 ViewData["ErrorMessage"] = "Quantity must be greater than 0.";
-                ViewData["Students"] = _studentRepository.GetAll(null);
-                ViewData["Drinks"] = _drinkRepository.GetAllDrinks();
-                return View("Index");
+                model.Students = _studentRepository.GetAll(null);
+                model.Drinks = _drinkRepository.GetAllDrinks();
+                return View("Index", model);
             }
 
-            if (order.Quantity > drink.Stock)
+            if (model.Quantity > drink.Stock)
             {
                 ViewData["ErrorMessage"] = "Not enough stock available for this drink.";
-                ViewData["Students"] = _studentRepository.GetAll(null);
-                ViewData["Drinks"] = _drinkRepository.GetAllDrinks();
-                return View("Index");
+                model.Students = _studentRepository.GetAll(null);
+                model.Drinks = _drinkRepository.GetAllDrinks();
+                return View("Index", model);
             }
 
-            int newStock = drink.Stock - order.Quantity;
+            int newStock = drink.Stock - model.Quantity;
+            Order order = new Order(model.StudentID, model.DrinkID, model.Quantity);
             _orderRepository.AddOrder(order);
-            _drinkRepository.UpdateStock(order.DrinkID, newStock);
+            _drinkRepository.UpdateStock(model.DrinkID, newStock);
 
-            ViewData["Message"] = $"Order processed: {order.Quantity} x {drink.Name} sold to {student.FirstName} {student.LastName}.";
+            ViewData["Message"] = $"Order processed: {model.Quantity} x {drink.Name} sold to {student.FirstName} {student.LastName}.";
 
-            List<Student> students = _studentRepository.GetAll(null);
-            List<Drink> drinks = _drinkRepository.GetAllDrinks();
-            ViewData["Students"] = students;
-            ViewData["Drinks"] = drinks;
+            DrinkOrderViewModel newModel = new DrinkOrderViewModel();
+            newModel.Students = _studentRepository.GetAll(null);
+            newModel.Drinks = _drinkRepository.GetAllDrinks();
 
-            return View("Index");
+            return View("Index", newModel);
         }
         catch (Exception)
         {
             ViewData["ErrorMessage"] = "Something went wrong while processing the order.";
-            ViewData["Students"] = _studentRepository.GetAll(null);
-            ViewData["Drinks"] = _drinkRepository.GetAllDrinks();
-            return View("Index");
+            DrinkOrderViewModel newModel = new DrinkOrderViewModel();
+            newModel.Students = _studentRepository.GetAll(null);
+            newModel.Drinks = _drinkRepository.GetAllDrinks();
+            return View("Index", newModel);
         }
     }
 }
